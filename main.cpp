@@ -118,9 +118,17 @@ void InitToolWnd()
 	pToolList->AddItem(L"橡皮擦", nsGlobalData::Eraser);
 	pWnd_Tools->AddLabel(L"输入线宽：", 5, pToolList->GetY() + pToolList->GetHeight() + 5, 155, 40);
 	auto pLen = pWnd_Tools->AddEdit(L"3", 10, pToolList->GetY() + pToolList->GetHeight() + 45, 100, 30);
-	pLen->RegMsg(KM_TEXTCHANGE, KrUI::MsgFuncAdapter([pLen]()
+	pLen->RegMsg(KM_TEXTCHANGE, KrUI::MsgFuncAdapter([pLen, pWnd_Tools]()
 	{
-		nsGlobalData::g_draw_info.line_width = std::stoul(pLen->GetText());
+		try
+		{
+			nsGlobalData::g_draw_info.line_width = std::stoul(pLen->GetText());
+		}
+		catch (const std::exception&)
+		{
+			MessageBoxW(pWnd_Tools->GetHWND(), L"请输入数值", L"警告", MB_OK);
+			pLen->SetText(std::to_wstring(3));
+		}
 	}));
 	pWnd_Tools->AddLabel(L"点击选择颜色：", 5, pLen->GetY() + pLen->GetHeight() + 5, 155, 40);
 	auto pBtn = pWnd_Tools->AddButton(L"颜色", 30, pLen->GetY() + pLen->GetHeight() + 45);
